@@ -31,7 +31,7 @@ lightweight wrapper for [php sqlite3](http://php.net/SQLite3) database
           .open(dbconn)          // load a database file
           .q(string)             // SQLite3#querySingle()
           .query(string)         // query, save result, set dblite#q{} query status
-          .schema([string])      // get table description{}('s)
+          .schema([string])      // get table description{}(s)
 
         static:
           .esc(string)           // SQLite3#escapeString
@@ -46,7 +46,7 @@ lightweight wrapper for [php sqlite3](http://php.net/SQLite3) database
 
           .ls(void)          // list database aliases
           .main(string)      // set dblite{} aliased by parameter as active
-          .rm([, ...string]) // remove(all) specified dblite{}('s) by alias(es)
+          .rm([, ...string]) // remove(all) specified dblite{}(s) by alias(es)
 
         static:
           .init(void)  // fetch dbpool singleton
@@ -98,7 +98,7 @@ lightweight wrapper for [php sqlite3](http://php.net/SQLite3) database
         id       integer  primary key,
         title    text     not null,
         content  text     not null,
-        post_id  integer  null index
+        post_id  integer  null
       );
 
     $query = <<< EOQ

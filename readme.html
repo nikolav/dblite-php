@@ -30,7 +30,7 @@ APIs:
       .open(dbconn)          // load a database file
       .q(string)             // SQLite3#querySingle()
       .query(string)         // query, save result, set dblite#q{} query status
-      .schema([string])      // get table description{}('s)
+      .schema([string])      // get table description{}(s)
 
     static:
       .esc(string)           // SQLite3#escapeString
@@ -45,7 +45,7 @@ APIs:
 
       .ls(void)          // list database aliases
       .main(string)      // set dblite{} aliased by parameter as active
-      .rm([, ...string]) // remove(all) specified dblite{}('s) by alias(es)
+      .rm([, ...string]) // remove(all) specified dblite{}(s) by alias(es)
 
     static:
       .init(void)  // fetch dbpool singleton
@@ -97,7 +97,7 @@ create table
     id       integer  primary key,
     title    text     not null,
     content  text     not null,
-    post_id  integer  null index
+    post_id  integer  null
   );
 
 $query = &lt;&lt;&lt; EOQ

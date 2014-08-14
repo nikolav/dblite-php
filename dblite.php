@@ -103,7 +103,7 @@ create table
     id       integer  primary key,
     title    text     not null,
     content  text     not null,
-    post_id  integer  null index
+    post_id  integer  null
   );
 
 $query = <<< EOQ
