@@ -5,7 +5,7 @@
 dblite.php
 author  : vukovic nikola
 email   : vukoivcnikola2014@gmail.com
-github  : 
+github  : https://github.com/nikolav/dblite-php
 license : public domain, do what you want I don't care if it breaks something
 
 deps:
