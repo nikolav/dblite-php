@@ -1,6 +1,6 @@
 <?php
 
-/**********************************************************************
+/*********************************************************************
 
 dblite.php
 author  : vukovic nikola
@@ -13,71 +13,66 @@ deps:
   SQLite3
 
 
-description:
+about:
   sqlite3 wrapper
-  iterable of database objects
+  Iterator<dblite>
 
 
 APIs:
 
   dblite{}:
     
-    object:
+    instance:
       
-      .q         // holds qstatus{} with last query stats
-      .status    // flag for last query runned (0 for 'OK', other for '!OK')
+      .q      // holds qstatus{} with last query stats
+      .status // 'success-flag' for last query (0 'OK', other '!OK')
       
-      .close(void) // release cached result, close database connection, nullify internal state
-      .conn()
-      .db()
-      .end(void)
-      .exec(string) // == .exec()
-      .ins()
-      .ls()
-      .open(dbconn) // load a database file
-      .q() // == .querySingle()
-      .query(string) // run a query, save result, set dblite#q status{}
-      .res()
-      .schema()
+      .close(void)           // release cached result, close db connection, 0-fy dblite{} state
+      .exec(string)          // SQLite3#exec()
+      .ins(string, matrix2D) // insert data
+      .ls(void)              // list tables
+      .open(dbconn)          // load a database file
+      .q(string)             // SQLite3#querySingle()
+      .query(string)         // query, save result, set dblite#q{} query status
+      .schema([string])      // get table description{}('s)
     
     static:
-      .esc()
-      .start()
+      .esc(string)           // SQLite3#escapeString
+      .start(string [, int]) // factory
 
 
   dbpool{}:
     
-    object:
+    instance:
       
-      .db
+      .db // active dblite{}
       
-      .ls()
-      .main()
-      .rm()
+      .ls(void)          // list database aliases
+      .main(string)      // set dblite{} aliased by parameter as active
+      .rm([, ...string]) // remove(all) specified dblite{}('s) by alias(es)
     
     static:
-      .init()  // fetch dbpool singleton
+      .init(void)  // fetch dbpool singleton
   
   
   dbconn{}:
     
-    object:
+    instance:
       
-      .mode(void)  // getter
-      .path(void)  // getter
+      .mode(void) // getter
+      .path(void) // getter
   
   
   qstatus{}
     
-    object: 
+    instance: 
       
-      .changes     //
-      .code        //
-      .exc         //
-      .inser_id    //
-      .last_query  //
-      .message     //
-
+      .changes     // (int) affected rows
+      .code        // (int) error code
+      .exc         // (Exception or null) error thrown
+      .inser_id    // (int)
+      .last_query  // (string)
+      .message     // (string) error message
 
 
 
@@ -89,39 +84,52 @@ usage example #1:
 $pool = dbpool::init();
 
 // populate it with sample db objects
-$pool->admin     = dblite::start('data/admin.sqlite3.db');
+$pool->app_admin = dblite::start('data/app_admin.sqlite3.db');
 $pool->app_forum = dblite::start('data/app_forum.sqlite3.db');
 $pool->app_x     = dblite::start('data/app_x.sqlite3.db');
 
-// load admin database
-// send sql 
-// loop results
-$pool->main('admin');
-foreach ($pool->db->query('select stuff from admin_tables') as $data) 
-  printf("%s: [%s]\n", $, $data->name, $data->email);
 
-// load, crud, loop
+// load admin database, send sql, loop results
+$pool->main('app_admin');
+foreach ($pool->db->query('select stuff from admin_tables') as $data) 
+  process($data);
+
+// load, crud, loop, etc.
 $pool->main('app_forum');
 
-// sample table:
-//   tbl_forum_post {id, title, content, user_id}
+// sample post table schema:
+create table 
+  tbl_post (
+    id       integer  primary key,
+    title    text     not null,
+    content  text     not null,
+    post_id  integer  null index
+  );
 
 $query = <<< EOQ
 
-select 
-  title, count(id) as tot
-from
-  tbl_forum_post
-group by
-  title
-order by
-  tot desc
-limit 1
+  select
+    the_title
+  from (
+    select
+      p.id, p.title as the_title, count(c.id) as tot
+    from
+      tbl_post as p
+    join
+      tbl_post as c
+        on p.id = c.post_id
+    where
+      p.post_id is null
+    group by
+      p.id
+    order by
+      tot desc
+    limit 1
+  );
 
 EOQ;
 
-  printf("story of the day: <a>%s</a>\n", $pool->db->q($query));
-
+  printf("epic story: <a>%s</a>\n", $pool->db->q($query));
 
 
 
@@ -133,7 +141,7 @@ usage example #2:
     process($record);
 
 
-**********************************************************************/
+*********************************************************************/
 
 
 // represents single db file
@@ -161,11 +169,9 @@ class dblite implements Iterator {
   public $q;
   public $status;
   
-  
   ///////////
   //// magic
 
-  // @param dbconn c
   function __construct (dbconn $c = null) {
     $c && $this->open($c);
   }
@@ -176,7 +182,6 @@ class dblite implements Iterator {
     $this->close();
     $this->db_ = null;
   }
-  
   
   ///////////////
   //// public api
@@ -344,7 +349,6 @@ class dblite implements Iterator {
     return $sc;
   }
 
-
   ///////////////
   //// protected
   
@@ -477,8 +481,9 @@ class dbpool implements Countable, ArrayAccess, Iterator {
   
   public $db;
   
-  // #magic
-  //
+  ///////////
+  //// magic
+  
   private function __construct () {}
   
   public function __clone () {
@@ -539,16 +544,16 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     throw new Exception("not supported", 1);
   }
   
+  //////////////
+  //// Countable
   
-  // #Countable
-  //
   public function count () {
     return count($this->pool_);
   }
   
-  
-  // #ArrayAccess
-  //
+  ////////////////
+  //// ArrayAccess
+
   public function offsetExists ($n) {
     return array_key_exists($n, $this->pool_);
   }
@@ -565,9 +570,9 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     unset($this->{$n});
   }
   
+  //////////////
+  //// Iterator
   
-  // #Iterator
-  //
   public function current () {
     return $this->pool_[current($this->npool_)];
   }
@@ -589,9 +594,8 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     return !is_null($this->key());
   }
   
-  
-  // #public api
-  //
+  ////////////////
+  //// public api
   
   // select a database for use by its name
   public function main ($bname) {
@@ -631,6 +635,9 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     return true;
   }
   
+  ///////////////
+  //// protected
+  
   // full gc
   protected function destroy () {
     
@@ -643,6 +650,9 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     
     return true;
   }
+  
+  ///////////////////
+  //// static public
   
   // singleton
   static public function init () {
@@ -661,20 +671,27 @@ class dbconn {
   private $dbpath_ = "";
   private $mode_   = null;
 
+  ///////////
+  //// magic
+
   // @param String, 'path/to/db/file.db'
   function __construct($path2db, $mode = null) {
     $this->dbpath_ = (string) $path2db;
     $this->mode_   = is_null($mode) ? (self::X | self::RW) : (int) $mode;
   }
+  
+  public function __toString() {
+    return $this->path();
+  }
+  
+  ////////////
+  //// public
 
   public function path() {
     return $this->dbpath_;
   }
   public function mode() {
     return $this->mode_;
-  }
-  public function __toString() {
-    return $this->path();
   }
 }
 
@@ -700,3 +717,5 @@ class qstatus {
     $this->exc        = $exc;
   }
 }
+
+//eof
