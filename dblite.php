@@ -612,6 +612,11 @@ class dbpool implements Countable, ArrayAccess, Iterator {
       throw new Exception("undefined [" . $bname . "] database", 1);
     }
   }
+
+  // method alias for .main()
+  public function active ($bname) {
+    $this->main($bname);
+  }
   
   // show loaded database names
   public function ls () {
