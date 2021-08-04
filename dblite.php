@@ -4,9 +4,9 @@
 
 dblite.php
 author  : vukovic nikola
-email   : vukoivcnikola2014@gmail.com
+email   : admin@nikolav.rs
 github  : https://github.com/nikolav/dblite-php
-license : public domain, do what you want I don't care if it breaks something
+license : public
 
 deps:
   php5+
@@ -517,7 +517,10 @@ class dbpool implements Countable, ArrayAccess, Iterator {
     $this->pool_[$bname] = $b;
   }
   
-  public function __set_state (array $props = array()) {
+  // public function __set_state (array $props = array()) {
+  //   throw new Exception("not supported", 1);
+  // }
+  static public function __set_state (array $props = array()) {
     throw new Exception("not supported", 1);
   }
   
