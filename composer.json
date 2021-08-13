@@ -1,6 +1,7 @@
 {
     "name": "nikolav/dblite-php",
     "description": "sqlite3 wrapper",
+    "license": "MIT", 
     "autoload": {
         "psr-4": {
             "nikolav\\dblite\\": "src/"
@@ -15,5 +16,5 @@
     "require": {
         "php": ">=7.4"
     }, 
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
