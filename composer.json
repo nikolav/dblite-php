@@ -1,7 +1,6 @@
 {
     "name": "nikolav/dblite-php",
     "description": "sqlite3 wrapper",
-    "license": "public",
     "autoload": {
         "psr-4": {
             "nikolav\\dblite\\": "src/"
@@ -13,5 +12,7 @@
             "email": "admin@nikolav.rs"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4"
+    }
 }
