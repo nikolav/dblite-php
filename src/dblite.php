@@ -2,6 +2,9 @@
 
 namespace nikolav\dblite;
 
+use \stdClass;
+use \Exception;
+
 /*********************************************************************
 
 dblite.php

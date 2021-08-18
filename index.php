@@ -15,10 +15,9 @@ $bp->active('maindb');
 
 
 $q = <<<EOQ_
-select count(*) as tot from main
+select count(*) as tot from main 
 EOQ_;
-// $bp->db->exec($q);
-
+$bp->db->exec($q);
 printf("[# of records]: %s", $bp->db->q($q));
 
 exit;

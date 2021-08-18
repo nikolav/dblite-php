@@ -5,6 +5,7 @@ namespace nikolav\dblite;
 use \Countable;
 use \ArrayAccess;
 use \Iterator;
+use \Exception;
 
 // represents a list of database connections
 class dbpool implements Countable, ArrayAccess, Iterator {
