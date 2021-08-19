@@ -8,7 +8,7 @@ class qstatus {
   
     public $changes;
     public $code;
-    public $exc;
+    public $error;
     public $insert_id;
     public $last_query;
     public $message;
@@ -21,7 +21,7 @@ class qstatus {
       $this->insert_id  = $insert_id;
       $this->last_query = $q;
       $this->message    = $msg;
-      $this->exc        = $exc;
+      $this->error      = $exc;
     }
   }
 
