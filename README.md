@@ -66,8 +66,8 @@ lightweight wrapper for [php sqlite3](http://php.net/SQLite3) database
 
           .changes     // (int) affected rows
           .code        // (int) error code
-          .exc         // (Exception or null) error thrown
-          .inser_id    // (int)
+          .error       // (Exception or null) error thrown
+          .insert_id   // (int)
           .last_query  // (string)
           .message     // (string) error message
 
