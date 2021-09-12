@@ -46,6 +46,7 @@ lightweight wrapper for [php sqlite3](http://php.net/SQLite3) database
 
           .ls(void)          // list database aliases
           .main(string)      // set dblite{} aliased by parameter as active
+            .active          // method alias for .main
           .rm([, ...string]) // remove(all) specified dblite{}(s) by alias(es)
 
         static:

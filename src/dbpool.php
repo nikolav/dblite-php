@@ -151,7 +151,7 @@ class dbpool implements Countable, ArrayAccess, Iterator {
   
     // method alias for .main()
     public function active ($bname) {
-      $this->main($bname);
+      return call_user_func_array(array($this, "main"), func_get_args());
     }
     
     // show loaded database names
