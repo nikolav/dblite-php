@@ -4,6 +4,8 @@ namespace nikolav\dblite;
 
 use \stdClass;
 use \Exception;
+use \Iterator;
+use \SQLite3;
 
 /*********************************************************************
 
@@ -148,8 +150,6 @@ usage example #2:
 
 *********************************************************************/
 
-use \Iterator;
-use \SQLite3;
 
 // represents single db file
 class dblite implements Iterator {

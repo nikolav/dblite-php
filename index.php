@@ -6,18 +6,19 @@ use nikolav\dblite\dbconn;
 use nikolav\dblite\qstatus;
 
 
-require __DIR__ . './vendor/autoload.php';
+require __DIR__ . '/./vendor/autoload.php';
 
-$bp         = dbpool::init();
-$bp->maindb = dblite::start('./main.db');
+$bp       = dbpool::init();
+$bp->main = dblite::start('./main.db');
 
-$bp->active('maindb');
+$bp->active('main');
 
 
 $q = <<<EOQ_
-select count(*) as tot from main 
+  select count(*) as tot from main 
 EOQ_;
 $bp->db->exec($q);
+
 printf("[# of records]: %s", $bp->db->q($q));
 
 exit;
