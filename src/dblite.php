@@ -293,7 +293,7 @@ class dblite implements Iterator {
     return $this;
   }
   
-  public function q ($q, $as_row = false) {
+  public function q ($q, $entireRow = false) {
     
     $this->status_reset_();
     
@@ -301,7 +301,7 @@ class dblite implements Iterator {
     $exc  = null;
     
     try {
-      $qres = $this->db_->querySingle($q, $as_row);
+      $qres = $this->db_->querySingle($q, $entireRow);
     } catch (Exception $e) {
       $exc = $e;
     }
