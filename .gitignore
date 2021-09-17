@@ -2,3 +2,4 @@
 *.log
 sample_data
 vendor
+main.db
